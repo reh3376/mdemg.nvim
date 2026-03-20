@@ -18,16 +18,34 @@ For the full installation guide — including detailed configuration options, mu
 ```lua
 {
   "reh3376/mdemg.nvim",
+  version = "*", -- pin to latest stable release
   config = function()
     require("mdemg").setup()
   end,
 }
 ```
 
+**lazy.nvim (pin to minor):**
+```lua
+{
+  "reh3376/mdemg.nvim",
+  version = "^0.1", -- pin to 0.1.x releases
+  config = function()
+    require("mdemg").setup()
+  end,
+}
+```
+
+**rocks.nvim:**
+```vim
+:Rocks install mdemg.nvim
+```
+
 **packer.nvim:**
 ```lua
 use {
   "reh3376/mdemg.nvim",
+  tag = "v0.1.*",
   config = function()
     require("mdemg").setup()
   end,
@@ -79,7 +97,7 @@ require("mdemg").setup({
 |---------|-------------|
 | `:MdemgAdmin` | `spaces`, `space-detail`, `prune`, `export-preview`, `export`, `import`, `meta-learn` |
 | `:MdemgLinear` | `issues`, `issue-detail`, `projects`, `project-detail`, `comments`, `create-comment` |
-| `:MdemgPlugins` | `list`, `modules`, `ape-status`, `ape-trigger`, `detail`, `module-detail` |
+| `:MdemgPlugins` | `list`, `install`, `validate`, `modules`, `ape-status`, `ape-trigger`, `detail`, `module-detail` |
 | `:MdemgWatcher` | `start`, `status`, `stop` |
 | `:MdemgWebhooks` | `trigger` |
 | `:MdemgHealth` | Aggregated dashboard (readyz, stats, RSIC, learning, neural) |

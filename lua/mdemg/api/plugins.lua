@@ -61,6 +61,30 @@ function M.ape_status(callback)
 	})
 end
 
+-- POST /v1/plugins/create
+function M.create(opts, callback)
+	client.post("/v1/plugins/create", opts or {}, {
+		on_success = function(_, data)
+			callback(nil, data)
+		end,
+		on_error = function(err)
+			callback(err)
+		end,
+	})
+end
+
+-- POST /v1/plugins/{id}/validate
+function M.validate(id, callback)
+	client.post("/v1/plugins/" .. id .. "/validate", {}, {
+		on_success = function(_, data)
+			callback(nil, data)
+		end,
+		on_error = function(err)
+			callback(err)
+		end,
+	})
+end
+
 -- POST /v1/ape/trigger
 function M.ape_trigger(opts, callback)
 	client.post("/v1/ape/trigger", opts or {}, {

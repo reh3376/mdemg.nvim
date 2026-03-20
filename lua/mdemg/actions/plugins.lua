@@ -1,6 +1,6 @@
 local M = {}
 
-local subcommands = { "list", "modules", "ape-status", "ape-trigger", "detail", "module-detail" }
+local subcommands = { "list", "install", "validate", "modules", "ape-status", "ape-trigger", "detail", "module-detail" }
 
 function M.run(args)
 	local sub = args and args[1] or nil
@@ -44,6 +44,65 @@ function M._dispatch(sub, args)
 						modifiable = false,
 					})
 				end,
+			})
+		end)
+	elseif sub == "install" then
+		vim.ui.input({ prompt = "Plugin name: " }, function(name)
+			if not name or name == "" then
+				return
+			end
+			local types = { "INGESTION", "REASONING", "APE" }
+			vim.ui.select(types, { prompt = "Plugin type:" }, function(ptype)
+				if not ptype then
+					return
+				end
+				notify.info("Creating plugin: " .. name .. " (" .. ptype .. ")")
+				api.create({ name = name, type = ptype }, function(err, data)
+					if err then
+						notify.error(err)
+						return
+					end
+					local result = data.data or data
+					local lines = {
+						"# Plugin Created",
+						"",
+						"**ID:** " .. (result.plugin_id or "?"),
+						"**Path:** " .. (result.plugin_path or "?"),
+						"",
+					}
+					if result.files_created then
+						table.insert(lines, "## Files Created")
+						for _, f in ipairs(result.files_created) do
+							table.insert(lines, "- " .. f)
+						end
+						table.insert(lines, "")
+					end
+					if result.next_steps then
+						table.insert(lines, "## Next Steps")
+						for _, s in ipairs(result.next_steps) do
+							table.insert(lines, "- " .. s)
+						end
+					end
+					float.open({ title = "Plugin Created", content = lines, filetype = "markdown", modifiable = false })
+				end)
+			end)
+		end)
+	elseif sub == "validate" then
+		local id = args and args[2]
+		if not id then
+			notify.warn("Usage: MdemgPlugins validate <id>")
+			return
+		end
+		notify.info("Validating plugin: " .. id)
+		api.validate(id, function(err, data)
+			if err then
+				notify.error(err)
+				return
+			end
+			float.open({
+				title = "Validation: " .. id,
+				content = vim.split(vim.inspect(data.data or data), "\n"),
+				modifiable = false,
 			})
 		end)
 	elseif sub == "modules" then

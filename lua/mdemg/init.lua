@@ -1,5 +1,7 @@
 local M = {}
 
+M._VERSION = "0.1.0"
+
 function M.setup(opts)
 	local config = require("mdemg.config")
 	config.setup(opts or {})

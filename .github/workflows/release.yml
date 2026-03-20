@@ -1,0 +1,95 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate version tag matches code
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          CODE_VERSION=$(grep -oP '_VERSION\s*=\s*"\K[^"]+' lua/mdemg/init.lua)
+          echo "Tag version: $TAG_VERSION"
+          echo "Code version: $CODE_VERSION"
+          if [ "$TAG_VERSION" != "$CODE_VERSION" ]; then
+            echo "::error::Tag version ($TAG_VERSION) does not match code version ($CODE_VERSION)"
+            exit 1
+          fi
+
+      - name: Install luacheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y luarocks
+          sudo luarocks install luacheck
+
+      - name: Install stylua
+        run: |
+          curl -L -o stylua.zip https://github.com/JohnnyMorganz/StyLua/releases/latest/download/stylua-linux-x86_64.zip
+          unzip stylua.zip -d /usr/local/bin
+          chmod +x /usr/local/bin/stylua
+
+      - name: Lint
+        run: make lint
+
+      - name: Format check
+        run: make format-check
+
+      - name: Install Neovim
+        run: |
+          curl -LO https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x86_64.tar.gz
+          tar xzf nvim-linux-x86_64.tar.gz
+          echo "$PWD/nvim-linux-x86_64/bin" >> $GITHUB_PATH
+
+      - name: Clone plenary.nvim
+        run: git clone --depth 1 https://github.com/nvim-lua/plenary.nvim /tmp/plenary.nvim
+
+      - name: Run tests
+        run: make test
+
+  release:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract changelog for this version
+        id: changelog
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          # Extract the section for this version from CHANGELOG.md
+          BODY=$(awk -v ver="$TAG_VERSION" '
+            /^## \[/ {
+              if (found) exit
+              if (index($0, "[" ver "]")) found=1
+              next
+            }
+            found { print }
+          ' CHANGELOG.md)
+          # Write to file for the release body
+          echo "$BODY" > /tmp/release_body.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: /tmp/release_body.md
+          generate_release_notes: false
+
+  luarocks:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publish to LuaRocks
+        uses: nvim-neorocks/luarocks-tag-release@v7
+        env:
+          LUAROCKS_API_KEY: ${{ secrets.LUAROCKS_API_KEY }}

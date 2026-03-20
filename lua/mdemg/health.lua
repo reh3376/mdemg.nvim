@@ -3,6 +3,9 @@ local M = {}
 M.check = function()
 	vim.health.start("mdemg.nvim")
 
+	local version = require("mdemg")._VERSION or "unknown"
+	vim.health.ok("Version: " .. version)
+
 	if vim.fn.has("nvim-0.10") == 1 then
 		vim.health.ok("Neovim >= 0.10")
 	else

@@ -68,9 +68,12 @@ function M.show_status()
 	local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id or "unknown"
 	local session_id = vim.g.mdemg_session_id or "none"
 
+	local plugin_version = require("mdemg")._VERSION or "unknown"
+
 	local lines = {
 		"# MDEMG Status",
 		"",
+		"**Plugin Version:** " .. plugin_version,
 		"**Endpoint:** " .. endpoint,
 		"**Space ID:** " .. space_id,
 		"**Session ID:** " .. session_id,
@@ -97,6 +100,7 @@ function M.show_status()
 			local detail = {
 				"# MDEMG Status",
 				"",
+				"**Plugin Version:** " .. plugin_version,
 				"**Endpoint:** " .. endpoint,
 				"**Space ID:** " .. space_id,
 				"**Session ID:** " .. session_id,
@@ -137,6 +141,7 @@ function M.show_status()
 			float.update(state, {
 				"# MDEMG Status",
 				"",
+				"**Plugin Version:** " .. plugin_version,
 				"**Endpoint:** " .. endpoint,
 				"**Space ID:** " .. space_id,
 				"**Session ID:** " .. session_id,

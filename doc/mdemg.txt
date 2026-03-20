@@ -194,8 +194,11 @@ The plugin will automatically:
 
                                                             *:MdemgPlugins*
 :MdemgPlugins [subcommand] [args]
-    Plugin and module management. Subcommands: list, modules,
-    ape-status, ape-trigger [event], detail <id>, module-detail <id>.
+    Plugin and module management. Subcommands: list, install,
+    validate <id>, modules, ape-status, ape-trigger [event],
+    detail <id>, module-detail <id>.
+    Install prompts for plugin name and type (INGESTION, REASONING,
+    APE), then scaffolds via the server API.
 
                                                             *:MdemgWatcher*
 :MdemgWatcher [subcommand] [args]
@@ -506,6 +509,8 @@ The plugin exposes Lua API modules for programmatic access:
   `require("mdemg.api.plugins")`~
     .list(callback)
     .get(id, callback)
+    .create(opts, callback)
+    .validate(id, callback)
     .list_modules(callback)
     .get_module(id, callback)
     .ape_status(callback)
