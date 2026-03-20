@@ -1,0 +1,20 @@
+{
+  "data": {
+    "guidance_id": "guid-20260319-abc",
+    "space_id": "test-space",
+    "constraints": [
+      {
+        "name": "Use context.Context for cancellation",
+        "description": "All async operations should support context-based cancellation",
+        "type": "should"
+      }
+    ],
+    "corrections": [],
+    "suggestions": [
+      {
+        "type": "pattern",
+        "text": "Similar code in retrieval/recall.go handles this with a guard clause"
+      }
+    ]
+  }
+}

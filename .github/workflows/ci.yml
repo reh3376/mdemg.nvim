@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install luacheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y luarocks
+          sudo luarocks install luacheck
+
+      - name: Install stylua
+        run: |
+          curl -L -o stylua.zip https://github.com/JohnnyMorganz/StyLua/releases/latest/download/stylua-linux-x86_64.zip
+          unzip stylua.zip -d /usr/local/bin
+          chmod +x /usr/local/bin/stylua
+
+      - name: Lint
+        run: make lint
+
+      - name: Format check
+        run: make format-check
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Neovim
+        run: |
+          curl -LO https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x86_64.tar.gz
+          tar xzf nvim-linux-x86_64.tar.gz
+          echo "$PWD/nvim-linux-x86_64/bin" >> $GITHUB_PATH
+
+      - name: Clone plenary.nvim
+        run: git clone --depth 1 https://github.com/nvim-lua/plenary.nvim /tmp/plenary.nvim
+
+      - name: Run tests
+        run: make test

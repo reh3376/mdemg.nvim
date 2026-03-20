@@ -1,0 +1,41 @@
+{
+  "space_id": "test-space",
+  "results": [
+    {
+      "node_id": "node-abc123",
+      "path": "internal/retrieval/",
+      "name": "semantic_recall",
+      "summary": "Vector-based recall with Hebbian activation spreading",
+      "layer": 0,
+      "score": 0.857,
+      "normalized_confidence": 85.7,
+      "confidence_level": "HIGH",
+      "vector_sim": 0.82,
+      "activation": 0.75,
+      "evidence": [
+        {
+          "symbol_name": "VectorRecall",
+          "symbol_type": "function",
+          "file_path": "internal/retrieval/recall.go",
+          "line": 42,
+          "line_end": 60,
+          "signature": "func VectorRecall(ctx Context, query string) []Result"
+        }
+      ]
+    },
+    {
+      "node_id": "node-def456",
+      "path": "internal/hidden/",
+      "name": "concept_consolidation",
+      "summary": "Aggregates L0 observations into L1 hidden nodes",
+      "layer": 1,
+      "score": 0.723,
+      "normalized_confidence": 72.3,
+      "confidence_level": "MEDIUM",
+      "evidence": []
+    }
+  ],
+  "next_cursor": "",
+  "has_more": false,
+  "total_count": 2
+}

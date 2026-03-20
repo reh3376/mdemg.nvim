@@ -1,0 +1,11 @@
+{
+  "status": "Warning",
+  "violations": [],
+  "warnings": [
+    {
+      "constraint_node_id": "constraint-xyz",
+      "description": "Prefer table-driven tests for edge cases",
+      "rationale": "Maintainability pattern in this codebase"
+    }
+  ]
+}

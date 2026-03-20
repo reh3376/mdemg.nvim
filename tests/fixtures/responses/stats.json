@@ -1,0 +1,30 @@
+{
+  "space_id": "test-space",
+  "memory_count": 15234,
+  "observation_count": 3456,
+  "memories_by_layer": {
+    "0": 10000,
+    "1": 3000,
+    "2": 1234,
+    "3": 0
+  },
+  "embedding_coverage": 0.98,
+  "avg_embedding_dimensions": 3072,
+  "learning_activity": {
+    "co_activated_edges": 4567,
+    "avg_weight": 0.62,
+    "max_weight": 1.0
+  },
+  "temporal_distribution": {
+    "last_24h": 234,
+    "last_7d": 1200,
+    "last_30d": 4500
+  },
+  "connectivity": {
+    "avg_degree": 2.3,
+    "max_degree": 45,
+    "orphan_count": 12
+  },
+  "health_score": 0.87,
+  "computed_at": "2026-03-19T14:30:00Z"
+}

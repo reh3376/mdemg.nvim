@@ -1,0 +1,11 @@
+{
+  "obs_id": "obs-20260319-abc",
+  "node_id": "node-abc123",
+  "surprise_score": 0.72,
+  "surprise_factors": {
+    "novelty": 0.8,
+    "contradiction": 0.2
+  },
+  "summary": "Auto-generated summary of the observation",
+  "detected_constraints": []
+}

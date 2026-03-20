@@ -1,0 +1,7 @@
+{
+  "space_id": "test-space",
+  "node_id": "node-new123",
+  "obs_id": "obs-new456",
+  "embedding_dims": 3072,
+  "anomalies": []
+}

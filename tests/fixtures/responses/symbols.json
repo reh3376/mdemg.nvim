@@ -1,0 +1,21 @@
+{
+  "space_id": "test-space",
+  "results": [
+    {
+      "symbol_name": "VectorRecall",
+      "symbol_type": "function",
+      "file": "internal/retrieval/recall.go",
+      "line": 42,
+      "exported": true,
+      "relevance": 0.95
+    },
+    {
+      "symbol_name": "vectorRecallBatch",
+      "symbol_type": "function",
+      "file": "internal/retrieval/recall.go",
+      "line": 120,
+      "exported": false,
+      "relevance": 0.72
+    }
+  ]
+}

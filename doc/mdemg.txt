@@ -1,0 +1,555 @@
+*mdemg.txt*    Neovim plugin for MDEMG — keyboard-driven access to your AI memory graph
+
+Author: reh3376
+License: MIT
+Requires: Neovim >= 0.10, curl
+
+==============================================================================
+CONTENTS                                                      *mdemg-contents*
+
+  1. Introduction ............................ |mdemg-introduction|
+  2. Setup .................................. |mdemg-setup|
+  3. Commands ............................... |mdemg-commands|
+  4. Keymaps ................................ |mdemg-keymaps|
+  5. Configuration .......................... |mdemg-configuration|
+  6. Statusline ............................. |mdemg-statusline|
+  7. Health Check ........................... |mdemg-healthcheck|
+  8. API .................................... |mdemg-api|
+
+==============================================================================
+1. INTRODUCTION                                           *mdemg-introduction*
+
+mdemg.nvim provides keyboard-driven access to MDEMG (Multi-Dimensional
+Emergent Memory Graph) from Neovim. It connects to a running MDEMG instance
+via its REST API, enabling memory recall, observation storage, guardrail
+validation, Jiminy guidance, and deep reflection — all without leaving your
+editor.
+
+Features:
+- Semantic memory recall with Telescope integration
+- Store observations from visual selections or freeform input
+- Guardrail validation against learned constraints
+- Jiminy guidance with proactive suggestions
+- Deep reflection across the memory graph
+- Symbol search with jump-to-definition
+- Auto-ingest on file save
+- Per-buffer instance resolution (multi-project support)
+- Session lifecycle management
+- Health monitoring and statusline component
+
+Optional dependencies:
+- telescope.nvim — enhanced result picking with preview
+- nvim-notify — better notifications
+- lualine.nvim — statusline integration
+- nvim-treesitter — context-aware auto-tagging
+
+==============================================================================
+2. SETUP                                                       *mdemg-setup*
+                                                             *mdemg.setup()*
+
+Add to your Neovim config: >lua
+  require("mdemg").setup({
+    -- All options are optional. Shown values are defaults.
+    endpoint = "http://localhost:9999",
+    space_id = nil,  -- auto-resolved from project directory name
+    timeout = 30,
+  })
+<
+
+With lazy.nvim: >lua
+  {
+    "reh3376/mdemg.nvim",
+    config = function()
+      require("mdemg").setup()
+    end,
+  }
+<
+
+The plugin will automatically:
+- Generate a session ID on VimEnter
+- Resolve the MDEMG instance per buffer (via `.mdemg.port` file)
+- Start health polling for statusline updates
+- Set up auto-ingest on file save
+
+==============================================================================
+3. COMMANDS                                                 *mdemg-commands*
+
+                                                            *:MdemgRecall*
+:MdemgRecall [query]
+    Search the memory graph. Without arguments, opens a prompt. With
+    arguments, uses them as the search query. Supports visual mode
+    (selected text becomes the query). Results shown in Telescope or
+    vim.ui.select with preview. Select a result to view details.
+
+                                                            *:MdemgStore*
+:MdemgStore
+    Store an observation in the memory graph. In visual mode, stores
+    the selected text. In normal mode, opens a multiline input float.
+    Auto-generates metadata from treesitter context (function name,
+    class, language) and file path.
+
+                                                            *:MdemgValidate*
+:MdemgValidate
+    Validate current buffer changes against learned constraints.
+    Generates a git diff of the current file and sends it to the
+    guardrail validation endpoint. Results shown as Pass (green),
+    Warning (yellow), or Block (red) with constraint details.
+
+                                                            *:MdemgGuide*
+:MdemgGuide
+    Request Jiminy guidance for the current cursor context. Gathers
+    surrounding code (+-50 lines) and treesitter scope, sends to the
+    guidance endpoint. Results shown in a top-right anchored float
+    that auto-dismisses. Use + to mark helpful, - for unhelpful.
+
+                                                            *:MdemgReflect*
+:MdemgReflect [topic]
+    Deep reflection on a topic. Explores the memory graph in depth,
+    returning core memories, related concepts, abstractions, and
+    insights. Results rendered in a new vertical split with markdown
+    formatting. Supports visual mode for topic selection.
+
+                                                            *:MdemgSymbols*
+:MdemgSymbols [query]
+    Search for code symbols in the memory graph. Results include
+    symbol name, type, file path, and line number. Selecting a result
+    jumps to the file and line.
+
+                                                            *:MdemgStatus*
+:MdemgStatus
+    Show detailed MDEMG instance status in a floating window. Displays
+    endpoint, space ID, session ID, connection state, memory statistics,
+    layer distribution, learning activity, and temporal distribution.
+
+                                                            *:MdemgIngest*
+:MdemgIngest [subcommand] [args]
+    Ingestion management. Subcommands: trigger, status <job_id>,
+    cancel <job_id>, jobs, files. Without subcommand, opens picker.
+    The `trigger` subcommand opens an SSE progress window.
+
+                                                            *:MdemgConversation*
+:MdemgConversation [subcommand] [args]
+    Conversation memory lifecycle. Subcommands: observe, correct,
+    recall, resume, consolidate, graduate, volatile-stats, session-health.
+
+                                                            *:MdemgConstraints*
+:MdemgConstraints [subcommand] [args]
+    Constraint management. Subcommands: list, stats, effectiveness,
+    conflicts, detect-conflicts.
+
+                                                            *:MdemgLearning*
+:MdemgLearning [subcommand] [args]
+    Learning system controls. Subcommands: stats, freeze [reason],
+    unfreeze, freeze-status, prune [--execute], distribution, frontiers.
+    Prune defaults to dry run; pass `--execute` to actually prune.
+
+                                                            *:MdemgRSIC*
+:MdemgRSIC [subcommand] [args]
+    RSIC self-improvement cycle. Subcommands: cycle [--dry-run],
+    assess, report [task_id], history, calibration, health, signals,
+    rollback <cycle_id>, reset.
+
+                                                            *:MdemgBackup*
+:MdemgBackup [subcommand] [args]
+    Backup and restore. Subcommands: trigger, list, status <backup_id>,
+    manifest <backup_id>, restore <backup_id> [target_space],
+    delete <backup_id>.
+
+                                                            *:MdemgScraper*
+:MdemgScraper [subcommand] [args]
+    Web scraper job management. Subcommands: scrape (prompts for URLs),
+    list, status <job_id>, cancel <job_id>, review <job_id>.
+
+                                                            *:MdemgNeural*
+:MdemgNeural [subcommand]
+    Neural sidecar status. Subcommand: status.
+
+                                                            *:MdemgGaps*
+:MdemgGaps [subcommand] [args]
+    Capability gap analysis. Subcommands: list, detail <gap_id>,
+    interviews, interview-detail <interview_id>, feedback.
+
+                                                            *:MdemgSkills*
+:MdemgSkills [subcommand] [args]
+    Skill registry. Subcommands: list (select to recall), recall <name>,
+    register <name> (prompts for description).
+
+                                                            *:MdemgHash*
+:MdemgHash [subcommand] [args]
+    Hash verification for file integrity. Subcommands: register [path],
+    files, verify [file], verify-all, update [file], revert [file],
+    scan [path], lookup <hash>. Defaults to current file/cwd.
+
+                                                            *:MdemgAdmin*
+:MdemgAdmin [subcommand] [args]
+    Admin space management. Subcommands: spaces, space-detail <id>,
+    prune [--execute], export-preview [space_id], export <space_id>
+    [profile], import, meta-learn [space_id].
+
+                                                            *:MdemgLinear*
+:MdemgLinear [subcommand] [args]
+    Linear integration. Subcommands: issues, issue-detail <id>,
+    projects, project-detail <id>, comments, create-comment <issue_id>.
+    Note: Requires Linear module to be active on the server.
+
+                                                            *:MdemgPlugins*
+:MdemgPlugins [subcommand] [args]
+    Plugin and module management. Subcommands: list, modules,
+    ape-status, ape-trigger [event], detail <id>, module-detail <id>.
+
+                                                            *:MdemgWatcher*
+:MdemgWatcher [subcommand] [args]
+    File watcher control. Subcommands: start [path], status, stop.
+    Start defaults to current working directory.
+
+                                                            *:MdemgWebhooks*
+:MdemgWebhooks [subcommand] [args]
+    Webhook management. Subcommands: trigger <source>.
+
+                                                            *:MdemgHealth*
+:MdemgHealth
+    Aggregated health dashboard. Shows readiness, memory stats,
+    RSIC health, learning status, and neural sidecar state in a
+    single floating window. All API calls are made in parallel.
+
+==============================================================================
+4. KEYMAPS                                                   *mdemg-keymaps*
+
+Default keymaps (configurable via `keymaps` option):
+
+  Normal mode:~
+    <leader>mr   |:MdemgRecall|     - Recall memories
+    <leader>ms   |:MdemgStore|      - Store observation
+    <leader>mv   |:MdemgValidate|   - Validate changes
+    <leader>mg   |:MdemgGuide|      - Get guidance
+    <leader>mf   |:MdemgReflect|    - Reflect on topic
+    <leader>my   |:MdemgSymbols|    - Search symbols
+    <leader>mi   |:MdemgStatus|     - Show status
+
+  Visual mode:~
+    <leader>mr   Recall using selected text as query
+    <leader>ms   Store selected text as observation
+
+  Float keymaps (inside MDEMG floating windows):~
+    q            Close float
+    <Esc>        Close float
+    y            Yank current line to clipboard
+    <CR>         Select / confirm
+    ?            Show help
+
+  Guide float keymaps:~
+    +            Mark guidance as helpful
+    -            Mark guidance as unhelpful
+
+Disable a keymap by setting it to empty string: >lua
+  require("mdemg").setup({
+    keymaps = {
+      guide = "",  -- disable guide keymap
+    },
+  })
+<
+
+==============================================================================
+5. CONFIGURATION                                       *mdemg-configuration*
+
+Full configuration with defaults: >lua
+  require("mdemg").setup({
+    endpoint = "http://localhost:9999",
+    space_id = nil,
+    timeout = 30,
+
+    keymaps = {
+      recall = "<leader>mr",
+      store = "<leader>ms",
+      validate = "<leader>mv",
+      guide = "<leader>mg",
+      reflect = "<leader>mf",
+      symbols = "<leader>my",
+      status = "<leader>mi",
+    },
+
+    session = {
+      auto_create = true,
+      auto_consolidate = true,
+    },
+
+    auto = {
+      ingest_on_save = true,
+      ingest_debounce_ms = 2000,
+      ingest_extensions = {
+        "go", "py", "lua", "js", "ts", "tsx", "jsx",
+        "rs", "java", "rb", "c", "cpp", "h", "hpp",
+      },
+      health_poll_interval = 30,
+      stats_refresh_interval = 120,
+    },
+
+    ui = {
+      border = "rounded",
+      width = 0.8,
+      height = 0.8,
+      use_telescope = true,
+      use_notify = true,
+      float_timeout = 10,
+    },
+
+    statusline = {
+      format = "short",
+      icons = true,
+    },
+
+    guardrail = {
+      auto_validate = false,
+    },
+
+    log_level = "warn",
+  })
+<
+
+Instance resolution priority:~
+  1. `.mdemg.port` file (walk up from buffer path)
+  2. `.mdemg/config.yaml` server.port
+  3. `MDEMG_ENDPOINT` environment variable
+  4. `setup()` endpoint option
+  5. Default: http://localhost:9999
+
+Space ID resolution priority:~
+  1. `.mdemg/config.yaml` space_id
+  2. `MDEMG_SPACE_ID` environment variable
+  3. `setup()` space_id option
+  4. Project directory basename
+
+==============================================================================
+6. STATUSLINE                                             *mdemg-statusline*
+
+The plugin exports a statusline component for lualine or similar: >lua
+  -- lualine example
+  require("lualine").setup({
+    sections = {
+      lualine_x = {
+        {
+          require("mdemg.ui.statusline").component,
+          color = require("mdemg.ui.statusline").color,
+        },
+      },
+    },
+  })
+<
+
+The component shows:
+- Connection icon (brain emoji or [M])
+- Space ID
+- Node count (short format) or + health score (long format)
+- Color: green (connected), red (disconnected), yellow (stale)
+
+==============================================================================
+7. HEALTH CHECK                                         *mdemg-healthcheck*
+
+Run `:checkhealth mdemg` to verify your setup. Checks:
+- Neovim version >= 0.10
+- curl on PATH
+- .mdemg/ directory present
+- .mdemg.port file present
+- MDEMG instance reachable
+- Space ID resolved
+- Optional dependencies (telescope, nvim-notify, lualine, treesitter)
+
+==============================================================================
+8. API                                                         *mdemg-api*
+
+The plugin exposes Lua API modules for programmatic access:
+
+  `require("mdemg.api.memory")`~
+    .retrieve(query, opts, callback)
+    .ingest(content, metadata, callback)
+    .ingest_files(paths, callback)
+    .reflect(topic, opts, callback)
+    .stats(callback)
+    .validate(diff, files, callback)
+
+  `require("mdemg.api.health")`~
+    .readyz(callback)
+    .healthz(callback)
+    .embedding_health(callback)
+    .stats(callback)
+    .freshness(space_id, callback)
+    .freeze_status(callback)
+
+  `require("mdemg.api.jiminy")`~
+    .guide(context, opts, callback)
+    .feedback(guidance_id, helpful, opts, callback)
+
+  `require("mdemg.api.conversation")`~
+    .resume(session_id, opts, callback)
+    .consolidate(session_id, callback)
+    .observe(content, obs_type, opts, callback)
+    .correct(original, correction, callback)
+    .recall(query, opts, callback)
+    .volatile_stats(callback)
+    .graduate(opts, callback)
+    .session_health(callback)
+    .session_anomalies(callback)
+
+  `require("mdemg.api.symbols")`~
+    .search(query, opts, callback)
+
+  `require("mdemg.api.ingest")`~
+    .trigger(opts, callback)
+    .status(job_id, callback)
+    .cancel(job_id, callback)
+    .jobs(callback)
+    .files(callback)
+
+  `require("mdemg.api.constraints")`~
+    .list(callback)
+    .stats(callback)
+    .effectiveness(constraint_id, callback)
+    .conflicts(callback)
+    .detect_conflicts(opts, callback)
+
+  `require("mdemg.api.learning")`~
+    .freeze(reason, callback)
+    .unfreeze(callback)
+    .freeze_status(callback)
+    .prune(opts, callback)
+    .stats(callback)
+    .distribution(callback)
+    .frontiers(opts, callback)
+
+  `require("mdemg.api.rsic")`~
+    .cycle(opts, callback)
+    .assess(opts, callback)
+    .report(callback)
+    .report_detail(task_id, callback)
+    .history(opts, callback)
+    .calibration(callback)
+    .health(callback)
+    .signals(callback)
+    .rollback(cycle_id, callback)
+    .reset(opts, callback)
+
+  `require("mdemg.api.backup")`~
+    .trigger(opts, callback)
+    .status(backup_id, callback)
+    .list(opts, callback)
+    .manifest(backup_id, callback)
+    .delete(backup_id, callback)
+    .restore(backup_id, target, callback)
+
+  `require("mdemg.api.scraper")`~
+    .create(urls, space_id, callback)
+    .list(opts, callback)
+    .get(job_id, callback)
+    .cancel(job_id, callback)
+    .review(job_id, approve, feedback, callback)
+
+  `require("mdemg.api.neural")`~
+    .status(callback)
+
+  `require("mdemg.api.gaps")`~
+    .list(callback)
+    .get(gap_id, callback)
+    .interviews(opts, callback)
+    .interview_detail(interview_id, callback)
+    .feedback(content, obs_type, callback)
+
+  `require("mdemg.api.skills")`~
+    .list(callback)
+    .register(name, opts, callback)
+    .recall(name, callback)
+
+  `require("mdemg.api.hash")`~
+    .register(base_path, callback)
+    .files(callback)
+    .get_by_hash(hash, callback)
+    .verify(file_path, callback)
+    .verify_all(callback)
+    .update(file_path, callback)
+    .revert(file_path, callback)
+    .scan(base_path, callback)
+
+  `require("mdemg.api.spaces")`~
+    .list(callback)
+    .update(space_id, opts, callback)
+    .export(space_id, opts, callback)
+    .import(opts, callback)
+    .prune(space_id, opts, callback)
+    .freshness_batch(space_ids, callback)
+
+  `require("mdemg.api.jobs")`~
+    .stream(job_id, callbacks)
+    .status(job_id, callback)
+    .list(callback)
+
+  `require("mdemg.api.admin")`~
+    .list_spaces(callback)
+    .get_space(space_id, callback)
+    .update_space(space_id, opts, callback)
+    .delete_space(space_id, callback)
+    .prune_spaces(opts, callback)
+    .export_preview(opts, callback)
+    .export(opts, callback)
+    .import(opts, callback)
+    .meta_learn(opts, callback)
+
+  `require("mdemg.api.linear")`~
+    .list_issues(opts, callback)
+    .get_issue(id, callback)
+    .create_issue(body, callback)
+    .update_issue(id, body, callback)
+    .delete_issue(id, callback)
+    .list_projects(opts, callback)
+    .get_project(id, callback)
+    .list_comments(opts, callback)
+    .create_comment(body, callback)
+
+  `require("mdemg.api.plugins")`~
+    .list(callback)
+    .get(id, callback)
+    .list_modules(callback)
+    .get_module(id, callback)
+    .ape_status(callback)
+    .ape_trigger(opts, callback)
+
+  `require("mdemg.api.watcher")`~
+    .start(opts, callback)
+    .status(callback)
+    .stop(callback)
+
+  `require("mdemg.api.webhooks")`~
+    .linear(body, callback)
+    .trigger(id, body, callback)
+
+  `require("mdemg.api.snapshots")`~
+    .list(callback)
+    .create(opts, callback)
+    .get(id, callback)
+    .latest(callback)
+    .delete(id, callback)
+    .cleanup(callback)
+
+  `require("mdemg.api.templates")`~
+    .list(callback)
+    .create(body, callback)
+    .get(id, callback)
+    .update(id, body, callback)
+    .delete(id, callback)
+
+  `require("mdemg.api.org_reviews")`~
+    .list(callback)
+    .stats(callback)
+    .decide(id, decision, callback)
+    .flag(observation_id, reason, callback)
+
+  `require("mdemg.client")`~
+    .request(method, path, opts)
+    .get(path, opts)
+    .post(path, body, opts)
+    .is_healthy(endpoint)
+
+All callbacks use error-first pattern: callback(err, data)
+  err: string or nil
+  data: decoded JSON response table
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:

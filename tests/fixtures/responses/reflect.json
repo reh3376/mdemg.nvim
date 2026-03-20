@@ -1,0 +1,36 @@
+{
+  "topic": "Hebbian learning",
+  "core_memories": [
+    {
+      "node_id": "node-abc",
+      "name": "CO_ACTIVATED_WITH edge type",
+      "path": "internal/learning/",
+      "summary": "Tracks co-activation frequency and strength between concepts",
+      "layer": 0,
+      "score": 0.92,
+      "distance": 0
+    }
+  ],
+  "related_concepts": [
+    {
+      "node_id": "concept-xyz",
+      "name": "Weight Decay and Forgetting",
+      "layer": 2,
+      "score": 0.78,
+      "distance": 2
+    }
+  ],
+  "abstractions": [],
+  "insights": [
+    {
+      "type": "cluster",
+      "description": "Hebbian learning clustered with temporal concepts",
+      "node_ids": ["node-1", "node-2"]
+    }
+  ],
+  "graph_context": {
+    "nodes_explored": 150,
+    "edges_traversed": 380,
+    "max_layer_reached": 4
+  }
+}
