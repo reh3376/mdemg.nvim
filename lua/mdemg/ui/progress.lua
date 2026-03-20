@@ -4,8 +4,7 @@ local M = {}
 M._active = {}
 
 -- Open a progress display for a job
-function M.open(job_id, opts)
-	opts = opts or {}
+function M.open(job_id)
 	local float = require("mdemg.ui.float")
 
 	local lines = {

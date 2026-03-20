@@ -1,7 +1,6 @@
 local M = {}
 
 function M.run()
-	local notify = require("mdemg.ui.notify")
 	local float = require("mdemg.ui.float")
 	local health_api = require("mdemg.api.health")
 	local rsic_api = require("mdemg.api.rsic")

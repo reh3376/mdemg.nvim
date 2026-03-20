@@ -1,6 +1,15 @@
 local M = {}
 
-local subcommands = { "observe", "correct", "recall", "resume", "consolidate", "graduate", "volatile-stats", "session-health" }
+local subcommands = {
+	"observe",
+	"correct",
+	"recall",
+	"resume",
+	"consolidate",
+	"graduate",
+	"volatile-stats",
+	"session-health",
+}
 
 function M.run(args)
 	local sub = args and args[1] or nil
@@ -36,7 +45,12 @@ function M._dispatch(sub, args)
 						if err then
 							notify.error(err)
 						else
-							notify.info("Observed (" .. (data.node_id or "?") .. ") surprise=" .. string.format("%.2f", data.surprise_score or 0))
+							local msg = string.format(
+								"Observed (%s) surprise=%.2f",
+								data.node_id or "?",
+								data.surprise_score or 0
+							)
+							notify.info(msg)
 						end
 					end)
 				end
@@ -78,7 +92,10 @@ function M._dispatch(sub, args)
 				local lines = { "# Conversation Recall: " .. query, "" }
 				for _, r in ipairs(results) do
 					table.insert(lines, "### " .. (r.type or "?") .. " — " .. (r.node_id or ""))
-					table.insert(lines, string.format("**Score:** %.3f | **Layer:** %s", r.score or 0, tostring(r.layer or "?")))
+					table.insert(
+						lines,
+						string.format("**Score:** %.3f | **Layer:** %s", r.score or 0, tostring(r.layer or "?"))
+					)
 					if r.content then
 						table.insert(lines, "")
 						table.insert(lines, r.content)

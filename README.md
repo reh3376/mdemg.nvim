@@ -12,6 +12,8 @@ Neovim plugin for [MDEMG](https://github.com/reh3376/mdemg) — keyboard-driven 
 
 ## Installation
 
+For the full installation guide — including detailed configuration options, multi-project setup, statusline integration, troubleshooting, and startup behavior — see the [Installation Guide](https://github.com/reh3376/mdemg/blob/main/docs/guides/nvim/mdemg-plugin/installation.md).
+
 **lazy.nvim:**
 ```lua
 {

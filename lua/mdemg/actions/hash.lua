@@ -44,7 +44,10 @@ function M._dispatch(sub, args)
 			local lines = { "# Tracked Files", "" }
 			for _, f in ipairs(files) do
 				local status = f.verified and "OK" or "UNVERIFIED"
-				table.insert(lines, string.format("- **%s** `%s` — %s", f.path or "?", (f.hash or "?"):sub(1, 12), status))
+				table.insert(
+					lines,
+					string.format("- **%s** `%s` — %s", f.path or "?", (f.hash or "?"):sub(1, 12), status)
+				)
 			end
 			float.open({ title = "Hash Files", content = lines, filetype = "markdown", modifiable = false })
 		end)
@@ -120,7 +123,11 @@ function M._dispatch(sub, args)
 				notify.error(err)
 				return
 			end
-			float.open({ title = "Hash: " .. hash:sub(1, 12), content = vim.split(vim.inspect(data), "\n"), modifiable = false })
+			float.open({
+				title = "Hash: " .. hash:sub(1, 12),
+				content = vim.split(vim.inspect(data), "\n"),
+				modifiable = false,
+			})
 		end)
 	else
 		notify.warn("Unknown subcommand: " .. sub)

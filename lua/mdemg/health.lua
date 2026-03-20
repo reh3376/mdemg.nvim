@@ -29,8 +29,17 @@ M.check = function()
 	end
 
 	local endpoint = vim.b.mdemg_endpoint or vim.g.mdemg_endpoint or require("mdemg.config").get().endpoint
-	local result =
-		vim.fn.system({ "curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", "--max-time", "3", endpoint .. "/readyz" })
+	local result = vim.fn.system({
+		"curl",
+		"-s",
+		"-o",
+		"/dev/null",
+		"-w",
+		"%{http_code}",
+		"--max-time",
+		"3",
+		endpoint .. "/readyz",
+	})
 	if result == "200" then
 		vim.health.ok("MDEMG instance reachable at " .. endpoint)
 	else

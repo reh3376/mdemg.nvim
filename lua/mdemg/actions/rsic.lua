@@ -51,7 +51,11 @@ function M._dispatch(sub, args)
 					notify.error(err)
 					return
 				end
-				float.open({ title = "Report: " .. task_id, content = vim.split(vim.inspect(data), "\n"), modifiable = false })
+				float.open({
+					title = "Report: " .. task_id,
+					content = vim.split(vim.inspect(data), "\n"),
+					modifiable = false,
+				})
 			end)
 		else
 			api.report(function(err, data)

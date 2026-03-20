@@ -1,6 +1,6 @@
 describe("mdemg.api.constraints", function()
 	local constraints
-	local captured_path, captured_body, captured_method
+	local captured_path, captured_method
 
 	before_each(function()
 		package.loaded["mdemg.api.constraints"] = nil
@@ -11,9 +11,8 @@ describe("mdemg.api.constraints", function()
 		config.setup({ endpoint = "http://localhost:9999" })
 
 		package.loaded["mdemg.client"] = {
-			post = function(path, body, opts)
+			post = function(path, _, opts)
 				captured_path = path
-				captured_body = body
 				captured_method = "POST"
 				if opts.on_success then
 					opts.on_success(200, {})

@@ -57,7 +57,9 @@ function M.request(method, path, opts)
 				if err_msg:match("Connection refused") or err_msg:match("connect to host") then
 					err_msg = "MDEMG instance not running — run `mdemg start` in project root"
 				elseif err_msg:match("timed out") or err_msg:match("Operation timed out") then
-					err_msg = "Request timed out after " .. (opts.timeout or require("mdemg.config").get().timeout) .. "s"
+					err_msg = "Request timed out after "
+						.. (opts.timeout or require("mdemg.config").get().timeout)
+						.. "s"
 				end
 				if opts.on_error then
 					opts.on_error(err_msg)

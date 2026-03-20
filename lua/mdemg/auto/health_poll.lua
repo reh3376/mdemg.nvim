@@ -8,15 +8,23 @@ function M.setup()
 
 	local interval = (cfg.auto.health_poll_interval or 30) * 1000
 	M._timer = vim.uv.new_timer()
-	M._timer:start(1000, interval, vim.schedule_wrap(function()
-		M._check_health()
-	end))
+	M._timer:start(
+		1000,
+		interval,
+		vim.schedule_wrap(function()
+			M._check_health()
+		end)
+	)
 
 	local stats_interval = (cfg.auto.stats_refresh_interval or 120) * 1000
 	M._stats_timer = vim.uv.new_timer()
-	M._stats_timer:start(5000, stats_interval, vim.schedule_wrap(function()
-		M._refresh_stats()
-	end))
+	M._stats_timer:start(
+		5000,
+		stats_interval,
+		vim.schedule_wrap(function()
+			M._refresh_stats()
+		end)
+	)
 end
 
 function M._check_health()

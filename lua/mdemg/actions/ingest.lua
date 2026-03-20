@@ -89,7 +89,10 @@ function M._dispatch(sub, args)
 			end
 			local lines = { "# Ingest Jobs", "" }
 			for _, j in ipairs(jobs) do
-				table.insert(lines, string.format("- **%s** — %s (%s)", j.job_id or "?", j.status or "?", j.created_at or "?"))
+				table.insert(
+					lines,
+					string.format("- **%s** — %s (%s)", j.job_id or "?", j.status or "?", j.created_at or "?")
+				)
 			end
 			float.open({ title = "Ingest Jobs", content = lines, filetype = "markdown", modifiable = false })
 		end)

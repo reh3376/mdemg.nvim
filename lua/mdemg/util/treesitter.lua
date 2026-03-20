@@ -37,7 +37,12 @@ function M.get_context()
 				result.function_name = M._get_node_name(node)
 			end
 		end
-		if ntype:match("class") or ntype:match("struct") or ntype == "type_declaration" or ntype == "interface_declaration" then
+		if
+			ntype:match("class")
+			or ntype:match("struct")
+			or ntype == "type_declaration"
+			or ntype == "interface_declaration"
+		then
 			if not result.class_name then
 				result.class_name = M._get_node_name(node)
 			end

@@ -51,10 +51,14 @@ function M._dispatch(sub, args)
 			end
 			local lines = { "# Scraper Jobs", "" }
 			for _, j in ipairs(jobs) do
-				table.insert(
-					lines,
-					string.format("- **%s** — %s (%d/%d URLs)", j.job_id or "?", j.status or "?", j.processed_urls or 0, j.total_urls or 0)
+				local line = string.format(
+					"- **%s** — %s (%d/%d URLs)",
+					j.job_id or "?",
+					j.status or "?",
+					j.processed_urls or 0,
+					j.total_urls or 0
 				)
+				table.insert(lines, line)
 			end
 			float.open({ title = "Scraper Jobs", content = lines, filetype = "markdown", modifiable = false })
 		end)
@@ -69,7 +73,11 @@ function M._dispatch(sub, args)
 				notify.error(err)
 				return
 			end
-			float.open({ title = "Scraper: " .. job_id, content = vim.split(vim.inspect(data), "\n"), modifiable = false })
+			float.open({
+				title = "Scraper: " .. job_id,
+				content = vim.split(vim.inspect(data), "\n"),
+				modifiable = false,
+			})
 		end)
 	elseif sub == "cancel" then
 		local job_id = args and args[2]

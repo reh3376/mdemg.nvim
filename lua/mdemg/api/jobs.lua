@@ -11,28 +11,31 @@ function M.stream(job_id, opts, callbacks)
 
 	local args = { "curl", "-s", "-N", url, "--max-time", tostring(opts.timeout or 300) }
 
-	local handle = vim.system(args, { text = true, stdout = function(_, data)
-		if not data then
-			return
-		end
-		vim.schedule(function()
-			for line in data:gmatch("[^\n]+") do
-				if line:match("^data:") then
-					local json_str = line:sub(6)
-					local ok, event = pcall(vim.json.decode, json_str)
-					if ok and event then
-						if event.status == "completed" and callbacks.on_complete then
-							callbacks.on_complete(event)
-						elseif event.status == "failed" and callbacks.on_error then
-							callbacks.on_error(event.error or "Job failed")
-						elseif event.progress and callbacks.on_progress then
-							callbacks.on_progress(event)
+	local handle = vim.system(args, {
+		text = true,
+		stdout = function(_, data)
+			if not data then
+				return
+			end
+			vim.schedule(function()
+				for line in data:gmatch("[^\n]+") do
+					if line:match("^data:") then
+						local json_str = line:sub(6)
+						local ok, event = pcall(vim.json.decode, json_str)
+						if ok and event then
+							if event.status == "completed" and callbacks.on_complete then
+								callbacks.on_complete(event)
+							elseif event.status == "failed" and callbacks.on_error then
+								callbacks.on_error(event.error or "Job failed")
+							elseif event.progress and callbacks.on_progress then
+								callbacks.on_progress(event)
+							end
 						end
 					end
 				end
-			end
-		end)
-	end }, function(result)
+			end)
+		end,
+	}, function(result)
 		vim.schedule(function()
 			if result.code ~= 0 and callbacks.on_error then
 				callbacks.on_error(result.stderr or "Stream disconnected")

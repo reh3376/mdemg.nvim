@@ -19,9 +19,11 @@ describe("mdemg.client", function()
 					callback(mock_result)
 				end)
 			end
-			return { wait = function()
-				return mock_result
-			end }
+			return {
+				wait = function()
+					return mock_result
+				end,
+			}
 		end
 
 		client = require("mdemg.client")
