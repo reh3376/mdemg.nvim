@@ -34,12 +34,10 @@ describe("integration: validate and guide", function()
 	-- IT-6: jiminy guide with code context
 	it("jiminy guide returns guidance", function()
 		local done = false
-		local result
 		jiminy.guide("func VectorRecall(ctx context.Context)", {
 			file_path = "internal/retrieval/recall.go",
 			query = "How does recall work?",
-		}, function(err, data)
-			result = data
+		}, function()
 			done = true
 		end)
 		vim.wait(10000, function()

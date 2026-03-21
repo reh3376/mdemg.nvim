@@ -1,6 +1,6 @@
 describe("mdemg.api.health", function()
 	local mod
-	local captured_path, captured_body, captured_method, captured_opts
+	local captured_path, captured_method, captured_opts
 
 	before_each(function()
 		package.loaded["mdemg.api.health"] = nil
@@ -18,7 +18,6 @@ describe("mdemg.api.health", function()
 			resolve_endpoint = function() return "http://localhost:9999" end,
 			post = function(path, body, opts)
 				captured_path = path
-				captured_body = body
 				captured_method = "POST"
 				captured_opts = opts
 				if opts.on_success then
@@ -43,7 +42,6 @@ describe("mdemg.api.health", function()
 			end,
 			patch = function(path, body, opts)
 				captured_path = path
-				captured_body = body
 				captured_method = "PATCH"
 				captured_opts = opts
 				if opts.on_success then
@@ -53,7 +51,6 @@ describe("mdemg.api.health", function()
 			request = function(method, path, opts)
 				captured_path = path
 				captured_method = method
-				captured_body = opts.body
 				captured_opts = opts
 				if opts.on_success then
 					opts.on_success(200, {})
