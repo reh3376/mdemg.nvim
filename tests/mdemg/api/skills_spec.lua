@@ -14,8 +14,12 @@ describe("mdemg.api.skills", function()
 		vim.g.mdemg_session_id = "test-session"
 
 		package.loaded["mdemg.client"] = {
-		resolve_space_id = function() return "test-space" end,
-		resolve_endpoint = function() return "http://localhost:9999" end,
+			resolve_space_id = function()
+				return "test-space"
+			end,
+			resolve_endpoint = function()
+				return "http://localhost:9999"
+			end,
 			post = function(path, body, opts)
 				captured_path = path
 				captured_body = body

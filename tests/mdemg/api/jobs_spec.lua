@@ -11,8 +11,12 @@ describe("mdemg.api.jobs", function()
 		config.setup({ endpoint = "http://localhost:9999" })
 
 		package.loaded["mdemg.client"] = {
-			resolve_space_id = function() return "test-space" end,
-			resolve_endpoint = function() return "http://localhost:9999" end,
+			resolve_space_id = function()
+				return "test-space"
+			end,
+			resolve_endpoint = function()
+				return "http://localhost:9999"
+			end,
 			post = function(path, body, opts)
 				captured_path = path
 				captured_method = "POST"

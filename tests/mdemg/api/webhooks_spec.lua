@@ -11,37 +11,41 @@ describe("mdemg.api.webhooks", function()
 		config.setup({ endpoint = "http://localhost:9999" })
 
 		package.loaded["mdemg.client"] = {
-			resolve_space_id = function() return "test-space" end,
-			resolve_endpoint = function() return "http://localhost:9999" end,
+			resolve_space_id = function()
+				return "test-space"
+			end,
+			resolve_endpoint = function()
+				return "http://localhost:9999"
+			end,
 			post = function(path, body, opts)
 				captured_path = path
 				captured_body = body
-					if opts.on_success then
+				if opts.on_success then
 					opts.on_success(200, {})
 				end
 			end,
 			get = function(path, opts)
 				captured_path = path
-					if opts.on_success then
+				if opts.on_success then
 					opts.on_success(200, {})
 				end
 			end,
 			delete = function(path, opts)
 				captured_path = path
-					if opts.on_success then
+				if opts.on_success then
 					opts.on_success(200, {})
 				end
 			end,
 			patch = function(path, body, opts)
 				captured_path = path
 				captured_body = body
-					if opts.on_success then
+				if opts.on_success then
 					opts.on_success(200, {})
 				end
 			end,
 			request = function(method, path, opts)
 				captured_path = path
-					captured_body = opts.body
+				captured_body = opts.body
 				if opts.on_success then
 					opts.on_success(200, {})
 				end
