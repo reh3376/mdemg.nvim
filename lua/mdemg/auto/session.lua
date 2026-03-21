@@ -56,8 +56,8 @@ function M.consolidate()
 		return
 	end
 
-	local endpoint = vim.b.mdemg_endpoint or vim.g.mdemg_endpoint or require("mdemg.config").get().endpoint
-	local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id
+	local endpoint = require("mdemg.client").resolve_endpoint()
+	local space_id = require("mdemg.client").resolve_space_id()
 	if not space_id then
 		return
 	end

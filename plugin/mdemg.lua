@@ -100,3 +100,28 @@ local function register_commands()
 end
 
 register_commands()
+
+vim.api.nvim_create_user_command("MdemgRefresh", function()
+	require("mdemg.util.instance").clear_cache()
+	require("mdemg.util.space").clear_cache()
+	local bufpath = vim.api.nvim_buf_get_name(0)
+	if bufpath ~= "" and vim.bo.buftype == "" then
+		local info = require("mdemg.util.instance").resolve(bufpath)
+		if info then
+			vim.b.mdemg_endpoint = info.endpoint
+			local sid = require("mdemg.util.space").resolve(info.project_root)
+			if sid then
+				vim.b.mdemg_space_id = sid
+			end
+		end
+	end
+	local client = require("mdemg.client")
+	vim.notify(
+		string.format(
+			"[mdemg] Refreshed — endpoint=%s space_id=%s",
+			client.resolve_endpoint() or "nil",
+			client.resolve_space_id() or "nil"
+		),
+		vim.log.levels.INFO
+	)
+end, { desc = "Clear MDEMG caches and re-resolve instance/space" })

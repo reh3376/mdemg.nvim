@@ -24,7 +24,7 @@ function M.list(opts, callback)
 	if opts.status then
 		params.status = opts.status
 	end
-	local space_id = opts.space_id or vim.b.mdemg_space_id or vim.g.mdemg_space_id
+	local space_id = opts.space_id or require("mdemg.client").resolve_space_id()
 	if space_id then
 		params.space_id = space_id
 	end

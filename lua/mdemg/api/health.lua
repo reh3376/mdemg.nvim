@@ -37,7 +37,7 @@ function M.embedding_health(callback)
 end
 
 function M.stats(callback)
-	local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id
+	local space_id = require("mdemg.client").resolve_space_id()
 	client.get("/v1/memory/stats", {
 		params = space_id and { space_id = space_id } or nil,
 		on_success = function(_, data)
@@ -50,7 +50,7 @@ function M.stats(callback)
 end
 
 function M.freshness(space_id, callback)
-	space_id = space_id or vim.b.mdemg_space_id or vim.g.mdemg_space_id
+	space_id = space_id or require("mdemg.client").resolve_space_id()
 	if not space_id then
 		callback("No space_id available")
 		return
@@ -66,7 +66,7 @@ function M.freshness(space_id, callback)
 end
 
 function M.freeze_status(callback)
-	local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id
+	local space_id = require("mdemg.client").resolve_space_id()
 	client.get("/v1/learning/freeze/status", {
 		params = space_id and { space_id = space_id } or nil,
 		on_success = function(_, data)

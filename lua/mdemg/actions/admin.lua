@@ -81,7 +81,7 @@ function M._dispatch(sub, args)
 			})
 		end)
 	elseif sub == "export-preview" then
-		local space_id = args and args[2] or vim.b.mdemg_space_id or vim.g.mdemg_space_id
+		local space_id = args and args[2] or require("mdemg.client").resolve_space_id()
 		if not space_id then
 			notify.warn("Usage: MdemgAdmin export-preview <space_id>")
 			return
@@ -98,7 +98,7 @@ function M._dispatch(sub, args)
 			})
 		end)
 	elseif sub == "export" then
-		local space_id = args and args[2] or vim.b.mdemg_space_id or vim.g.mdemg_space_id
+		local space_id = args and args[2] or require("mdemg.client").resolve_space_id()
 		local profile = args and args[3] or "metadata"
 		if not space_id then
 			notify.warn("Usage: MdemgAdmin export <space_id> [profile]")
@@ -119,7 +119,7 @@ function M._dispatch(sub, args)
 	elseif sub == "import" then
 		notify.warn("Import requires a structured payload — use the API directly")
 	elseif sub == "meta-learn" then
-		local space_id = args and args[2] or vim.b.mdemg_space_id or vim.g.mdemg_space_id
+		local space_id = args and args[2] or require("mdemg.client").resolve_space_id()
 		notify.info("Running meta-learning...")
 		api.meta_learn({ space_id = space_id }, function(err, data)
 			if err then

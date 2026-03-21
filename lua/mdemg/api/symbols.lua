@@ -6,7 +6,7 @@ function M.search(query, opts, callback)
 	local params = {
 		query = query,
 	}
-	local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id
+	local space_id = require("mdemg.client").resolve_space_id()
 	if space_id then
 		params.space_id = space_id
 	end

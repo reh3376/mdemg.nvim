@@ -64,8 +64,8 @@ function M.show_status()
 	local client = require("mdemg.client")
 	local float = require("mdemg.ui.float")
 
-	local endpoint = vim.b.mdemg_endpoint or vim.g.mdemg_endpoint or require("mdemg.config").get().endpoint
-	local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id or "unknown"
+	local endpoint = require("mdemg.client").resolve_endpoint()
+	local space_id = require("mdemg.client").resolve_space_id() or "unknown"
 	local session_id = vim.g.mdemg_session_id or "none"
 
 	local plugin_version = require("mdemg")._VERSION or "unknown"

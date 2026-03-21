@@ -106,7 +106,7 @@ end
 
 -- GET /v1/conversation/volatile/stats
 function M.volatile_stats(callback)
-	local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id
+	local space_id = require("mdemg.client").resolve_space_id()
 	client.get("/v1/conversation/volatile/stats", {
 		params = space_id and { space_id = space_id } or nil,
 		on_success = function(_, data)
