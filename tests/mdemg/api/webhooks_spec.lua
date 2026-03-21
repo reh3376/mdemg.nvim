@@ -1,6 +1,6 @@
 describe("mdemg.api.webhooks", function()
 	local mod
-	local captured_path, captured_body, captured_method, captured_opts
+	local captured_path, captured_body
 
 	before_each(function()
 		package.loaded["mdemg.api.webhooks"] = nil
@@ -16,42 +16,32 @@ describe("mdemg.api.webhooks", function()
 			post = function(path, body, opts)
 				captured_path = path
 				captured_body = body
-				captured_method = "POST"
-				captured_opts = opts
-				if opts.on_success then
+					if opts.on_success then
 					opts.on_success(200, {})
 				end
 			end,
 			get = function(path, opts)
 				captured_path = path
-				captured_method = "GET"
-				captured_opts = opts
-				if opts.on_success then
+					if opts.on_success then
 					opts.on_success(200, {})
 				end
 			end,
 			delete = function(path, opts)
 				captured_path = path
-				captured_method = "DELETE"
-				captured_opts = opts
-				if opts.on_success then
+					if opts.on_success then
 					opts.on_success(200, {})
 				end
 			end,
 			patch = function(path, body, opts)
 				captured_path = path
 				captured_body = body
-				captured_method = "PATCH"
-				captured_opts = opts
-				if opts.on_success then
+					if opts.on_success then
 					opts.on_success(200, {})
 				end
 			end,
 			request = function(method, path, opts)
 				captured_path = path
-				captured_method = method
-				captured_body = opts.body
-				captured_opts = opts
+					captured_body = opts.body
 				if opts.on_success then
 					opts.on_success(200, {})
 				end
