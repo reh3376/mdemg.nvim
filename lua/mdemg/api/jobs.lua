@@ -6,7 +6,7 @@ local client = require("mdemg.client")
 function M.stream(job_id, opts, callbacks)
 	opts = opts or {}
 	callbacks = callbacks or {}
-	local endpoint = vim.b.mdemg_endpoint or vim.g.mdemg_endpoint or require("mdemg.config").get().endpoint
+	local endpoint = require("mdemg.client").resolve_endpoint()
 	local url = endpoint .. "/v1/jobs/" .. job_id .. "/stream"
 
 	local args = { "curl", "-s", "-N", url, "--max-time", tostring(opts.timeout or 300) }

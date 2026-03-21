@@ -88,7 +88,7 @@ function M.freshness_batch(space_ids, callback)
 		end
 		params_str = params_str .. "space_ids[]=" .. vim.uri_encode(sid)
 	end
-	local endpoint = vim.b.mdemg_endpoint or vim.g.mdemg_endpoint or require("mdemg.config").get().endpoint
+	local endpoint = require("mdemg.client").resolve_endpoint()
 	client.request("GET", "/v1/memory/freshness?" .. params_str, {
 		endpoint = endpoint,
 		on_success = function(_, data)

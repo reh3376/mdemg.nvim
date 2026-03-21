@@ -16,6 +16,9 @@ function M.setup(opts)
 	vim.api.nvim_create_autocmd("BufEnter", {
 		group = vim.api.nvim_create_augroup("MdemgInstance", { clear = true }),
 		callback = function()
+			if vim.bo.buftype ~= "" then
+				return
+			end
 			local bufpath = vim.api.nvim_buf_get_name(0)
 			if bufpath == "" then
 				return
@@ -23,8 +26,19 @@ function M.setup(opts)
 			local info = instance.resolve(bufpath)
 			if info then
 				vim.b.mdemg_endpoint = info.endpoint
-				vim.b.mdemg_space_id = space.resolve(info.project_root)
+				local sid = space.resolve(info.project_root)
+				if sid then
+					vim.b.mdemg_space_id = sid
+				end
 			end
+		end,
+	})
+
+	vim.api.nvim_create_autocmd("DirChanged", {
+		group = vim.api.nvim_create_augroup("MdemgDirChanged", { clear = true }),
+		callback = function()
+			instance.clear_cache()
+			space.clear_cache()
 		end,
 	})
 

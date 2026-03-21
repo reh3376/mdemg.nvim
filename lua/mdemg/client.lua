@@ -2,17 +2,27 @@ local M = {}
 
 M._health = {}
 
-local function resolve_endpoint()
-	return vim.b.mdemg_endpoint or vim.g.mdemg_endpoint or require("mdemg.config").get().endpoint
+function M.resolve_endpoint()
+	return vim.g.mdemg_endpoint or vim.b.mdemg_endpoint or require("mdemg.config").get().endpoint
 end
 
-local function resolve_space_id()
-	return vim.b.mdemg_space_id or vim.g.mdemg_space_id or require("mdemg.config").get().space_id
+function M.resolve_space_id()
+	if vim.g.mdemg_space_id then
+		return vim.g.mdemg_space_id
+	end
+	if vim.b.mdemg_space_id then
+		return vim.b.mdemg_space_id
+	end
+	local cfg_space = require("mdemg.config").get().space_id
+	if cfg_space then
+		return cfg_space
+	end
+	return nil
 end
 
 function M.request(method, path, opts)
 	opts = opts or {}
-	local endpoint = opts.endpoint or resolve_endpoint()
+	local endpoint = opts.endpoint or M.resolve_endpoint()
 	local url = endpoint .. path
 
 	if opts.params then
@@ -35,7 +45,7 @@ function M.request(method, path, opts)
 		local body = opts.body
 		if type(body) == "table" then
 			if body.space_id == nil then
-				local sid = resolve_space_id()
+				local sid = M.resolve_space_id()
 				if sid then
 					body.space_id = sid
 				end
@@ -142,7 +152,7 @@ function M._track_failure(endpoint)
 end
 
 function M.is_healthy(endpoint)
-	endpoint = endpoint or resolve_endpoint()
+	endpoint = endpoint or M.resolve_endpoint()
 	local h = M._health[endpoint]
 	return h == nil or h.healthy
 end

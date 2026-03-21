@@ -29,7 +29,7 @@ function M._dispatch(sub, args)
 			for i, u in ipairs(urls) do
 				urls[i] = vim.trim(u)
 			end
-			local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id or "default"
+			local space_id = require("mdemg.client").resolve_space_id() or "default"
 			api.create(urls, space_id, function(err, data)
 				if err then
 					notify.error(err)

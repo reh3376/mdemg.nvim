@@ -1,5 +1,6 @@
 local M = {}
 
+-- Cache stores { [project_root] = { value = "space_id", mtime = number } }
 M._cache = {}
 
 function M.resolve(project_root)
@@ -7,13 +8,16 @@ function M.resolve(project_root)
 		return nil
 	end
 
-	if M._cache[project_root] then
-		return M._cache[project_root]
+	local config_path = project_root .. "/.mdemg/config.yaml"
+	local current_mtime = vim.fn.getftime(config_path)
+
+	local cached = M._cache[project_root]
+	if cached and cached.mtime == current_mtime then
+		return cached.value
 	end
 
 	local space_id = nil
 
-	local config_path = project_root .. "/.mdemg/config.yaml"
 	local config_reader = require("mdemg.util.config_reader")
 	local yaml = config_reader.read(config_path)
 	if yaml then
@@ -39,10 +43,19 @@ function M.resolve(project_root)
 	end
 
 	if not space_id then
-		space_id = vim.fn.fnamemodify(project_root, ":t")
+		vim.notify(
+			"[mdemg] No space_id found for "
+				.. project_root
+				.. " — set space_id in .mdemg/config.yaml, MDEMG_SPACE_ID env, or setup({space_id = '...'})",
+			vim.log.levels.WARN,
+			{ once = true }
+		)
 	end
 
-	M._cache[project_root] = space_id
+	-- Only cache non-nil values so re-resolution works after user fixes config
+	if space_id then
+		M._cache[project_root] = { value = space_id, mtime = current_mtime }
+	end
 	return space_id
 end
 

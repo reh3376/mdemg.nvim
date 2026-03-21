@@ -28,7 +28,7 @@ end
 
 -- GET /v1/learning/freeze/status
 function M.freeze_status(callback)
-	local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id
+	local space_id = require("mdemg.client").resolve_space_id()
 	client.get("/v1/learning/freeze/status", {
 		params = space_id and { space_id = space_id } or nil,
 		on_success = function(_, data)
@@ -59,7 +59,7 @@ end
 
 -- GET /v1/learning/stats
 function M.stats(callback)
-	local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id
+	local space_id = require("mdemg.client").resolve_space_id()
 	client.get("/v1/learning/stats", {
 		params = space_id and { space_id = space_id } or nil,
 		on_success = function(_, data)
@@ -90,7 +90,7 @@ end
 -- GET /v1/memory/frontiers
 function M.frontiers(opts, callback)
 	opts = opts or {}
-	local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id
+	local space_id = require("mdemg.client").resolve_space_id()
 	local params = {}
 	if space_id then
 		params.space_id = space_id
@@ -111,7 +111,7 @@ end
 
 -- GET /v1/memory/distribution
 function M.distribution(callback)
-	local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id
+	local space_id = require("mdemg.client").resolve_space_id()
 	client.get("/v1/memory/distribution", {
 		params = space_id and { space_id = space_id } or nil,
 		on_success = function(_, data)

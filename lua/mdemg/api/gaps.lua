@@ -3,7 +3,7 @@ local client = require("mdemg.client")
 
 -- GET /v1/system/capability-gaps
 function M.list(callback)
-	local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id
+	local space_id = require("mdemg.client").resolve_space_id()
 	client.get("/v1/system/capability-gaps", {
 		params = space_id and { space_id = space_id } or nil,
 		on_success = function(_, data)

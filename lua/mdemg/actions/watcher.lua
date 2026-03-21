@@ -21,7 +21,7 @@ function M._dispatch(sub, args)
 	local float = require("mdemg.ui.float")
 
 	if sub == "start" then
-		local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id
+		local space_id = require("mdemg.client").resolve_space_id()
 		local path = args and args[2] or vim.fn.getcwd()
 		api.start({ space_id = space_id, path = path }, function(err, data)
 			if err then

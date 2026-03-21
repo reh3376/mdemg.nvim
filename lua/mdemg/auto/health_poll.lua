@@ -52,7 +52,7 @@ function M._refresh_stats()
 		})
 	end)
 
-	local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id
+	local space_id = require("mdemg.client").resolve_space_id()
 	if space_id then
 		health.freshness(space_id, function(err, data)
 			if err or not data then

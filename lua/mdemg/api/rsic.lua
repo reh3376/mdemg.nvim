@@ -61,7 +61,7 @@ end
 -- GET /v1/self-improve/history
 function M.history(opts, callback)
 	opts = opts or {}
-	local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id
+	local space_id = require("mdemg.client").resolve_space_id()
 	local params = {}
 	if space_id then
 		params.space_id = space_id
@@ -82,7 +82,7 @@ end
 
 -- GET /v1/self-improve/calibration
 function M.calibration(callback)
-	local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id
+	local space_id = require("mdemg.client").resolve_space_id()
 	client.get("/v1/self-improve/calibration", {
 		params = space_id and { space_id = space_id } or nil,
 		on_success = function(_, data)
@@ -110,7 +110,7 @@ end
 
 -- GET /v1/self-improve/health
 function M.health(callback)
-	local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id
+	local space_id = require("mdemg.client").resolve_space_id()
 	client.get("/v1/self-improve/health", {
 		params = space_id and { space_id = space_id } or nil,
 		on_success = function(_, data)
@@ -124,7 +124,7 @@ end
 
 -- GET /v1/self-improve/signals
 function M.signals(callback)
-	local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id
+	local space_id = require("mdemg.client").resolve_space_id()
 	client.get("/v1/self-improve/signals", {
 		params = space_id and { space_id = space_id } or nil,
 		on_success = function(_, data)

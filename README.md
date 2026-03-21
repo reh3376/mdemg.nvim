@@ -57,7 +57,7 @@ use {
 ```lua
 require("mdemg").setup({
   endpoint = "http://localhost:9999", -- default
-  -- space_id auto-resolves from project directory name
+  -- space_id auto-resolves from .mdemg/config.yaml, MDEMG_SPACE_ID env, or setup()
 })
 ```
 
@@ -74,6 +74,7 @@ require("mdemg").setup({
 | `:MdemgReflect [topic]` | Deep reflection across the memory graph |
 | `:MdemgSymbols [query]` | Search code symbols with jump-to-definition |
 | `:MdemgStatus` | Show instance status in a floating window |
+| `:MdemgRefresh` | Clear caches and re-resolve instance/space |
 
 ### Tier 2 — Operational
 
@@ -143,6 +144,8 @@ require("lualine").setup({
 ## Features
 
 - Per-buffer instance resolution (multi-project support via `.mdemg.port` walk-up)
+- Space ID resolution: `.mdemg/config.yaml` > `MDEMG_SPACE_ID` env > `setup()` config, with mtime-based cache invalidation
+- Override precedence: `vim.g` (global) > `vim.b` (buffer-local) > config — `vim.g` always wins
 - Session lifecycle (auto-create on VimEnter, auto-consolidate on VimLeavePre)
 - Auto-ingest on file save with debouncing
 - Health polling for statusline updates

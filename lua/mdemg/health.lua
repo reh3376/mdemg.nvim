@@ -31,7 +31,7 @@ M.check = function()
 		vim.health.info("No .mdemg.port — instance may not be running")
 	end
 
-	local endpoint = vim.b.mdemg_endpoint or vim.g.mdemg_endpoint or require("mdemg.config").get().endpoint
+	local endpoint = require("mdemg.client").resolve_endpoint()
 	local result = vim.fn.system({
 		"curl",
 		"-s",
@@ -49,7 +49,7 @@ M.check = function()
 		vim.health.warn("MDEMG instance not reachable at " .. endpoint .. " — run `mdemg start`")
 	end
 
-	local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id
+	local space_id = require("mdemg.client").resolve_space_id()
 	if space_id then
 		vim.health.ok("Space ID: " .. space_id)
 	else

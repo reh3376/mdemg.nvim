@@ -3,7 +3,7 @@ local client = require("mdemg.client")
 
 -- GET /v1/constraints
 function M.list(callback)
-	local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id
+	local space_id = require("mdemg.client").resolve_space_id()
 	client.get("/v1/constraints", {
 		params = space_id and { space_id = space_id } or nil,
 		on_success = function(_, data)
@@ -17,7 +17,7 @@ end
 
 -- GET /v1/constraints/stats
 function M.stats(callback)
-	local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id
+	local space_id = require("mdemg.client").resolve_space_id()
 	client.get("/v1/constraints/stats", {
 		params = space_id and { space_id = space_id } or nil,
 		on_success = function(_, data)
@@ -31,7 +31,7 @@ end
 
 -- GET /v1/constraints/effectiveness
 function M.effectiveness(constraint_id, callback)
-	local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id
+	local space_id = require("mdemg.client").resolve_space_id()
 	local params = {}
 	if space_id then
 		params.space_id = space_id
@@ -65,7 +65,7 @@ end
 -- POST /v1/constraints/detect-conflicts
 function M.detect_conflicts(constraint_ids, callback)
 	local body = { constraint_ids = constraint_ids }
-	local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id
+	local space_id = require("mdemg.client").resolve_space_id()
 	if space_id then
 		body.space_id = space_id
 	end
@@ -81,7 +81,7 @@ end
 
 -- GET /v1/constraints/conflicts
 function M.conflicts(callback)
-	local space_id = vim.b.mdemg_space_id or vim.g.mdemg_space_id
+	local space_id = require("mdemg.client").resolve_space_id()
 	client.get("/v1/constraints/conflicts", {
 		params = space_id and { space_id = space_id } or nil,
 		on_success = function(_, data)
